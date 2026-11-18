@@ -2,35 +2,35 @@
   {
     "name": "Dopamine",
     "type": "TrollStore",
-    "description": "Мощный джейлбрейк для iOS 15-16.6.1. Позволяет устанавливать твики, получать root-доступ и настраивать систему. Полностью бесплатный и с открытым исходным кодом.",
-    "image": "https://github.com/opa334/Dopamine/raw/main/icon.png",
-    "link": "https://github.com/opa334/Dopamine/releases"
+    "description": "Мощный джейлбрейк для iOS 15-16.6.1. Позволяет устанавливать твики, получать root-доступ и настраивать систему.",
+    "image": "https://raw.githubusercontent.com/opa334/Dopamine/main/icon.png",
+    "link": "https://github.com/opa334/Dopamine"
   },
   {
     "name": "RetroArch",
     "type": "iOS",
-    "description": "Универсальный эмулятор для всех консолей (NES, SNES, Sega, PlayStation и многих других). Играйте в старые игры прямо на телефоне с поддержкой геймпадов и сохранений.",
+    "description": "Универсальный эмулятор для всех консолей (NES, SNES, Sega, PlayStation и многих других).",
     "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/RetroArch_Logo.svg/512px-RetroArch_Logo.svg.png",
     "link": "https://apps.apple.com"
   },
   {
     "name": "TrollStore",
     "type": "TrollStore",
-    "description": "Утилита, позволяющая устанавливать приложения (IPA) навсегда без подписи и без джейлбрейка. Работает на уязвимых версиях iOS.",
-    "image": "https://github.com/opa334/TrollStore/raw/main/Resources/AppIcon.png",
+    "description": "Утилита, позволяющая устанавливать приложения (IPA) навсегда без подписи и без джейлбрейка.",
+    "image": "https://raw.githubusercontent.com/opa334/TrollStore/main/Resources/AppIcon.png",
     "link": "https://github.com/opa334/TrollStore"
   },
   {
     "name": "VK Mod",
     "type": "Jailbreak",
-    "description": "Модифицированная версия клиента ВКонтакте с разблокированными функциями: скачивание музыки, скрытие статуса 'онлайн', блокировка рекламы и многое другое.",
+    "description": "Модифицированная версия клиента ВКонтакте с разблокированными функциями: скачивание музыки, скрытие статуса.",
     "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/VK_Logo_2021.svg/512px-VK_Logo_2021.svg.png",
     "link": "#"
   },
   {
     "name": "Minecraft PE",
     "type": "Android",
-    "description": "Легендарная песочница, где можно строить всё, что угодно, из блоков. Исследуйте бесконечный мир, выживайте и создавайте свои уникальные постройки.",
+    "description": "Легендарная песочница, где можно строить всё, что угодно, из блоков.",
     "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Minecraft_Logo.png/512px-Minecraft_Logo.png",
     "link": "#"
   }
