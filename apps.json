@@ -1,7 +1,7 @@
 [
   {
     "name": "Dopamine",
-    "image": "https://theapplewiki.com/images/applewiki/6/66/Dopamine_icon.png",
+    "image": "https://raw.githubusercontent.com/opa334/Dopamine/main/icon.png",
     "type": "Jailbreak",
     "description": "Semi jailbreak!",
     "link": "https://github.com/opa334/Dopamine/releases/download/3.0.13/Dopamine.ipa"
