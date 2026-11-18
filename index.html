@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dark Store</title>
     <style>
-        /* Твои стили (оставил без изменений) */
         :root { --bg: #050505; --surface: #121212; --surface-light: #1e1e1e; --text: #e0e0e0; --text-muted: #888; --accent: #ffffff; --border: #2a2a2a; --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); font-family: var(--font); overflow-x: hidden; line-height: 1.4; }
@@ -91,8 +90,8 @@
     </div>
 
     <script>
-        // Твой токен в Base64 (расшифруется на лету)
-        const ENCODED_TOKEN = "Z2hwX2pKSVlCV3lLUU84VHBpNkZaQ2lUUXJLNjdBTFFBdTN2RU1BdQ==";
+        // Твой НОВЫЙ токен в Base64
+        const ENCODED_TOKEN = "Z2hwX1VXVnhEMXVzdDZyd2ZyVU9xc2UzV25XODVXRm5XNzAwME81NQ==";
         const GITHUB_TOKEN = atob(ENCODED_TOKEN);
         
         const OWNER = "milanakravchenko480-afk";
@@ -194,7 +193,7 @@
                 const putRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`, {
                     method: 'PUT',
                     headers: {
-                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                        'Authorization': `token ${GITHUB_TOKEN}`, // ИСПОЛЬЗУЕМ ФОРМАТ token
                         'Accept': 'application/vnd.github.v3+json',
                         'Content-Type': 'application/json'
                     },
