@@ -5,326 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dy1ce Packages</title>
     <style>
-        :root { 
-            --bg: #000000; 
-            --surface: #0a0a0a; 
-            --surface-light: #141414; 
-            --text: #ffffff; 
-            --text-muted: #666666; 
-            --accent: #ffffff; 
-            --border: #222222; 
-            --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; 
-            --spring: cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        :root { --bg: #000; --surface: #0a0a0a; --surface-light: #141414; --text: #fff; --text-muted: #666; --border: #222; --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); font-family: var(--font); overflow-x: hidden; line-height: 1.4; -webkit-font-smoothing: antialiased; }
-
-        /* Шапка */
-        header { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 60px; padding: 0 20px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-            z-index: 100; border-bottom: 1px solid var(--border); 
-        }
-        .logo { font-size: 1.1em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        body { background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.4; }
         
-        /* Гамбургер */
-        .menu-btn { cursor: pointer; display: flex; flex-direction: column; gap: 6px; padding: 5px; z-index: 101; }
-        .menu-btn span { display: block; width: 24px; height: 1.5px; background-color: var(--text); transition: 0.3s ease; }
-        .menu-btn.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
-        .menu-btn.active span:nth-child(2) { opacity: 0; }
-        .menu-btn.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
-
-        /* Меню */
-        .nav-menu { 
-            position: fixed; top: 60px; left: 0; width: 100%; 
-            background: var(--bg); border-bottom: 1px solid var(--border); 
-            transform: translateY(-100%); opacity: 0; 
-            transition: transform 0.4s var(--spring), opacity 0.3s ease; 
-            z-index: 99; padding: 10px 0; display: flex; flex-direction: column;
-        }
-        .nav-menu.active { transform: translateY(0); opacity: 1; }
-        .nav-menu a { 
-            color: var(--text-muted); text-decoration: none; font-size: 0.95em; padding: 15px 20px; 
-            border-bottom: 1px solid var(--border); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .nav-menu a:last-child { border-bottom: none; }
-        .nav-menu a:hover, .nav-menu a:active { color: var(--text); background: var(--surface); }
-
-        /* Основной контент */
+        header { position: fixed; top: 0; width: 100%; height: 60px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--border); }
+        .logo { font-size: 1.1em; font-weight: 700; letter-spacing: 1px; }
+        
         main { padding: 80px 20px 40px; max-width: 600px; margin: 0 auto; }
-        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
         
-        /* Карточки */
-        .app-card { 
-            background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; 
-            display: flex; flex-direction: column; align-items: flex-start; text-align: left; 
-            cursor: pointer; transition: 0.3s var(--spring); 
-            opacity: 0; transform: translateY(20px); 
-        }
-        .app-card.visible { opacity: 1; transform: translateY(0); }
-        .app-card:active { transform: scale(0.97); background: var(--surface-light); }
+        /* Список */
+        .app-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; }
+        .app-item { background: var(--surface); padding: 20px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .app-item:active { background: var(--surface-light); }
         
-        .app-icon { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; margin-bottom: 15px; border: 1px solid var(--border); background: #000; }
-        .app-title { font-size: 0.95em; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .app-info { flex: 1; min-width: 0; }
+        .app-name { font-size: 1em; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .app-type { font-size: 0.7em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Форма */
-        .form-group { margin-bottom: 20px; position: relative; }
-        .form-group label { display: block; font-size: 0.75em; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        .form-group input, .form-group textarea { 
-            width: 100%; padding: 15px; border-radius: 8px; border: 1px solid var(--border); 
-            background: var(--surface); color: var(--text); font-family: var(--font); font-size: 0.95em; 
-            transition: 0.3s ease; 
-        }
-        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #444; background: var(--surface-light); }
-        .form-group textarea { resize: vertical; min-height: 100px; }
         
-        /* КАСТОМНЫЙ SELECT */
-        .custom-select-wrapper { position: relative; user-select: none; }
-        .custom-select-trigger {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px; border-radius: 8px; border: 1px solid var(--border); 
-            background: var(--surface); color: var(--text); font-size: 0.95em; cursor: pointer;
-            transition: 0.3s;
-        }
-        .custom-select-trigger:active { background: var(--surface-light); }
-        .custom-select-trigger::after {
-            content: ''; display: block; width: 8px; height: 8px;
-            border-right: 1.5px solid var(--text); border-bottom: 1.5px solid var(--text);
-            transform: rotate(45deg); transition: 0.3s; margin-top: -4px;
-        }
-        .custom-select-wrapper.open .custom-select-trigger::after { transform: rotate(-135deg); margin-top: 4px; }
+        .install-link { color: var(--text); text-decoration: none; font-size: 0.8em; font-weight: 600; padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px; transition: 0.2s; white-space: nowrap; margin-left: 15px; }
+        .install-link:active { background: var(--text); color: #000; }
         
-        .custom-options {
-            position: absolute; top: 100%; left: 0; right: 0; margin-top: 5px;
-            background: var(--surface-light); border: 1px solid var(--border); border-radius: 8px;
-            overflow: hidden; z-index: 10; opacity: 0; visibility: hidden; transform: translateY(-10px);
-            transition: 0.3s var(--spring); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .custom-select-wrapper.open .custom-options { opacity: 1; visibility: visible; transform: translateY(0); }
-        
-        .custom-option {
-            padding: 15px; font-size: 0.9em; color: var(--text-muted); cursor: pointer; transition: 0.2s;
-            border-bottom: 1px solid var(--border);
-        }
-        .custom-option:last-child { border-bottom: none; }
-        .custom-option:hover { background: var(--surface); color: var(--text); }
-        .custom-option.selected { color: var(--text); font-weight: 600; background: var(--surface); }
-
-        /* Кнопки */
-        .form-btn { width: 100%; padding: 18px; background: var(--text); color: #000; border: none; border-radius: 8px; font-weight: 700; font-size: 1em; cursor: pointer; margin-top: 10px; transition: 0.2s var(--spring); text-transform: uppercase; letter-spacing: 1px; }
-        .form-btn:active { transform: scale(0.98); opacity: 0.8; }
-        
-        /* Блок JSON */
-        #jsonResult { display: none; margin-top: 20px; background: var(--surface); padding: 20px; border-radius: 8px; border: 1px solid var(--border); font-family: "Courier New", monospace; font-size: 0.85em; color: #fff; white-space: pre-wrap; word-break: break-all; position: relative; }
-        .copy-btn { margin-top: 15px; width: 100%; background: var(--surface-light); color: var(--text); border: 1px solid var(--border); padding: 15px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; text-transform: uppercase; font-size: 0.8em; letter-spacing: 1px;}
-        .copy-btn:active { background: var(--surface); }
-        
-        .empty-msg { text-align: center; color: var(--text-muted); margin-top: 50px; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;}
-
-        /* Модалка */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 1000; display: flex; justify-content: center; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-content { background: var(--surface); width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 30px 20px; transform: translateY(100%); transition: transform 0.4s var(--spring); border-top: 1px solid var(--border); position: relative; max-height: 90vh; overflow-y: auto; }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-        
-        .close-btn { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; background: var(--surface-light); border-radius: 50%; border: none; color: var(--text-muted); font-size: 1em; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
-        .close-btn:active { color: var(--text); transform: scale(0.9); }
-        
-        .modal-icon { width: 80px; height: 80px; border-radius: 16px; object-fit: cover; margin-bottom: 20px; border: 1px solid var(--border); }
-        .modal-title { font-size: 1.4em; font-weight: 700; margin-bottom: 5px; }
-        .modal-type { font-size: 0.75em; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
-        .modal-desc { font-size: 0.9em; color: #999; margin-bottom: 30px; line-height: 1.6; }
-        
-        .btn-install { display: block; width: 100%; padding: 18px; background: var(--text); color: #000; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 1em; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-install:active { transform: scale(0.98); opacity: 0.8; }
+        .empty-msg { text-align: center; color: var(--text-muted); margin-top: 50px; padding: 20px; }
+        .error-msg { color: #ff4444; }
     </style>
 </head>
 <body>
-
     <header>
         <div class="logo">Dy1ce Packages</div>
-        <div class="menu-btn" onclick="toggleMenu()" id="menuBtn">
-            <span></span><span></span><span></span>
-        </div>
     </header>
 
-    <div class="nav-menu" id="navMenu">
-        <a href="#" onclick="showMain()">Мои приложения</a>
-        <a href="#" onclick="showEditor()">Добавить проект</a>
-    </div>
-
     <main>
-        <div class="app-grid" id="appGrid">
-            <div class="empty-msg" id="emptyMsg">Загрузка...</div>
-        </div>
-
-        <div id="editorArea" style="display: none;">
-            <div class="form-group"><label>Название</label><input type="text" id="inpName" placeholder="Minecraft"></div>
-            <div class="form-group"><label>Ссылка на картинку</label><input type="text" id="inpImage" placeholder="https://.../icon.png"></div>
-            
-            <!-- КАСТОМНЫЙ SELECT -->
-            <div class="form-group">
-                <label>Тип</label>
-                <div class="custom-select-wrapper" id="customSelect">
-                    <div class="custom-select-trigger" onclick="toggleSelect()" id="selectTrigger">iOS</div>
-                    <div class="custom-options">
-                        <div class="custom-option selected" onclick="selectOption(this, 'iOS')">iOS</div>
-                        <div class="custom-option" onclick="selectOption(this, 'Android')">Android</div>
-                        <div class="custom-option" onclick="selectOption(this, 'TrollStore')">TrollStore</div>
-                        <div class="custom-option" onclick="selectOption(this, 'Jailbreak')">Jailbreak</div>
-                    </div>
-                </div>
-                <input type="hidden" id="inpType" value="iOS">
-            </div>
-
-            <div class="form-group"><label>Описание</label><textarea id="inpDesc" placeholder="Описание..."></textarea></div>
-            <div class="form-group"><label>Ссылка на скачивание</label><input type="text" id="inpLink" placeholder="https://.../app.ipa"></div>
-            
-            <button class="form-btn" onclick="generateJSON()">Сгенерировать</button>
-
-            <div id="jsonResult">
-                <pre id="jsonText"></pre>
-                <button class="copy-btn" onclick="copyJSON()">Копировать</button>
-            </div>
-        </div>
+        <div id="appList" class="app-list"><div class="empty-msg">Загрузка из CyPwn...</div></div>
     </main>
 
-    <div class="modal-overlay" id="appModal" onclick="closeApp(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="close-btn" onclick="closeApp(event)">✕</button>
-            <img src="" id="mIcon" class="modal-icon" alt="Icon">
-            <div class="modal-title" id="mTitle"></div>
-            <div class="modal-type" id="mType"></div>
-            <div class="modal-desc" id="mDesc"></div>
-            <a href="#" id="mLink" class="btn-install">Установить</a>
-        </div>
-    </div>
-
     <script>
-        const OWNER = "milanakravchenko480-afk";
-        const REPO = "HtmlCode";
-        const FILE_PATH = "apps.json";
+        // Прямая ссылка на JSON-фид CyPwn
+        const CROWN_JSON_URL = "https://ipa.cypwn.xyz/cypwn.json";
 
-        let currentApps = [];
+        async function loadApps() {
+            const container = document.getElementById('appList');
+            
+            try {
+                const response = await fetch(CROWN_JSON_URL);
+                if (!response.ok) throw new Error('Сеть ответила ошибкой');
+                
+                const data = await response.json();
+                
+                // Структура JSON у CyPwn может быть разной (массив или объект с apps)
+                let apps = [];
+                if (Array.isArray(data)) {
+                    apps = data;
+                } else if (data.apps && Array.isArray(data.apps)) {
+                    apps = data.apps;
+                } else {
+                    // Если структура неизвестна, пробуем найти массив внутри
+                    const firstArray = Object.values(data).find(val => Array.isArray(val));
+                    if (firstArray) apps = firstArray;
+                }
 
-        window.onload = () => {
-            fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}?t=` + Date.now())
-                .then(res => res.json())
-                .then(data => {
-                    const decoded = atob(data.content);
-                    currentApps = JSON.parse(decoded);
-                    renderApps(currentApps);
-                })
-                .catch(err => {
-                    console.log('JSON пуст.');
-                    document.getElementById('emptyMsg').style.display = 'block';
-                });
-        };
+                if (apps.length === 0) {
+                    container.innerHTML = '<div class="empty-msg">Данные получены, но приложения не найдены.</div>';
+                    return;
+                }
 
-        // Логика кастомного селекта
-        function toggleSelect() {
-            document.getElementById('customSelect').classList.toggle('open');
-        }
-
-        function selectOption(el, value) {
-            document.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
-            el.classList.add('selected');
-            document.getElementById('selectTrigger').innerText = value;
-            document.getElementById('inpType').value = value;
-            document.getElementById('customSelect').classList.remove('open');
-        }
-
-        // Закрыть селект при клике вне его
-        document.addEventListener('click', function(e) {
-            const select = document.getElementById('customSelect');
-            if (!select.contains(e.target)) {
-                select.classList.remove('open');
+                renderApps(apps);
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<div class="empty-msg error-msg">Ошибка загрузки. Возможно, CyPwn блокирует запросы с этого домена (CORS).</div>';
             }
-        });
-
-        function toggleMenu() {
-            document.getElementById('menuBtn').classList.toggle('active');
-            document.getElementById('navMenu').classList.toggle('active');
-        }
-
-        function showMain() {
-            document.getElementById('appGrid').style.display = 'grid';
-            document.getElementById('editorArea').style.display = 'none';
-            toggleMenu();
-            renderApps(currentApps);
-        }
-
-        function showEditor() {
-            document.getElementById('appGrid').style.display = 'none';
-            document.getElementById('editorArea').style.display = 'block';
-            toggleMenu();
         }
 
         function renderApps(apps) {
-            const grid = document.getElementById('appGrid');
-            grid.innerHTML = '';
-            
-            if (!apps || apps.length === 0) {
-                grid.innerHTML = '<div class="empty-msg">Тут пока пусто</div>';
-                return;
-            }
+            const container = document.getElementById('appList');
+            container.innerHTML = '';
 
-            apps.forEach((app, index) => {
-                const card = document.createElement('div');
-                card.className = 'app-card';
-                card.innerHTML = `
-                    <img src="${app.image}" class="app-icon" onerror="this.src='https://via.placeholder.com/150/111111/ffffff?text=?'">
-                    <div class="app-title">${app.name}</div>
-                    <div class="app-type">${app.type}</div>
+            // Ограничим вывод, если приложений слишком много (чтобы не вешать телефон)
+            const maxApps = 200; 
+            const list = apps.slice(0, maxApps);
+
+            list.forEach(app => {
+                // Пытаемся вытащить данные из разных возможных полей JSON
+                const name = app.name || app.title || app.bundleName || 'Unknown';
+                const type = app.type || 'IPA';
+                const link = app.downloadURL || app.downloadUrl || app.url || app.link || '#';
+
+                const item = document.createElement('div');
+                item.className = 'app-item';
+                item.innerHTML = `
+                    <div class="app-info">
+                        <div class="app-name">${name}</div>
+                        <div class="app-type">${type}</div>
+                    </div>
+                    <a href="${link}" class="install-link" target="_blank">Установить</a>
                 `;
-                card.onclick = () => openApp(app);
-                grid.appendChild(card);
-                setTimeout(() => card.classList.add('visible'), 50 + (index * 50));
+                container.appendChild(item);
             });
-        }
 
-        function generateJSON() {
-            const name = document.getElementById('inpName').value.trim();
-            const image = document.getElementById('inpImage').value.trim();
-            const type = document.getElementById('inpType').value;
-            const desc = document.getElementById('inpDesc').value.trim();
-            const link = document.getElementById('inpLink').value.trim();
-
-            if (!name || !image || !link) {
-                alert('Заполни поля');
-                return;
-            }
-
-            const newApp = { name, image, type, description: desc, link };
-            const jsonString = JSON.stringify(newApp, null, 2);
-            
-            document.getElementById('jsonText').innerText = jsonString;
-            document.getElementById('jsonResult').style.display = 'block';
-        }
-
-        function copyJSON() {
-            const text = document.getElementById('jsonText').innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Скопировано');
-            });
-        }
-
-        function openApp(app) {
-            document.getElementById('mTitle').innerText = app.name;
-            document.getElementById('mType').innerText = app.type;
-            document.getElementById('mDesc').innerText = app.description;
-            document.getElementById('mLink').href = app.link;
-            document.getElementById('mIcon').src = app.image;
-            document.getElementById('appModal').classList.add('active');
-        }
-
-        function closeApp(event) {
-            if(event.target.id === 'appModal' || event.target.classList.contains('close-btn')) {
-                document.getElementById('appModal').classList.remove('active');
+            if (apps.length > maxApps) {
+                const note = document.createElement('div');
+                note.className = 'empty-msg';
+                note.innerText = `Показано ${maxApps} из ${apps.length}. Остальные скрыты для скорости.`;
+                container.appendChild(note);
             }
         }
+
+        loadApps();
     </script>
 </body>
 </html>
