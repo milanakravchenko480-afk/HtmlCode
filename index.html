@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dark Store</title>
+    <style>
+        :root { 
+            --bg: #050505; 
+            --surface: #121212; 
+            --surface-light: #1e1e1e; 
+            --text: #e0e0e0; 
+            --text-muted: #888; 
+            --accent: #ffffff; 
+            --border: #2a2a2a; 
+            --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; 
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); font-family: var(--font); overflow-x: hidden; line-height: 1.4; }
+        
+        /* --- ЭКРАН ЗАГРУЗКИ --- */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .spinner { 
+            width: 30px; height: 30px; 
+            border: 2px solid rgba(255,255,255,0.1); 
+            border-top-color: var(--accent); 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- ШАПКА И МЕНЮ --- */
+        header { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px; padding: 0 20px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            z-index: 100; border-bottom: 1px solid var(--border); 
+        }
+        .logo { font-size: 1.2em; font-weight: 700; letter-spacing: 1px; }
+        
+        .menu-btn { cursor: pointer; display: flex; flex-direction: column; gap: 5px; padding: 5px; z-index: 101;}
+        .menu-btn span { display: block; width: 24px; height: 2px; background-color: var(--text); transition: 0.3s; }
+        .menu-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .menu-btn.active span:nth-child(2) { opacity: 0; }
+        .menu-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .nav-menu { 
+            position: fixed; top: 60px; left: 0; width: 100%; 
+            background: var(--surface); border-bottom: 1px solid var(--border); 
+            transform: translateY(-100%); opacity: 0; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 99; padding: 20px; display: flex; flex-direction: column; gap: 15px; 
+        }
+        .nav-menu.active { transform: translateY(0); opacity: 1; }
+        .nav-menu a { color: var(--text); text-decoration: none; font-size: 1.1em; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .nav-menu a:last-child { border-bottom: none; }
+
+        /* --- СЕТКА И КАРТОЧКИ --- */
+        main { padding: 80px 20px 40px; max-width: 600px; margin: 0 auto; }
+        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+        
+        .app-card { 
+            background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 15px; 
+            display: flex; flex-direction: column; align-items: center; text-align: center; 
+            cursor: pointer; transition: transform 0.2s, background 0.2s; 
+            opacity: 0; transform: translateY(20px);
+        }
+        .app-card:active { transform: scale(0.96); background: var(--surface-light); }
+        .app-icon { width: 70px; height: 70px; border-radius: 16px; object-fit: cover; margin-bottom: 12px; border: 1px solid var(--border); background: #000;}
+        .app-title { font-size: 0.95em; font-weight: 600; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .app-type { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Анимация появления карточек */
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* --- МОДАЛЬНОЕ ОКНО --- */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); 
+            z-index: 1000; display: flex; justify-content: center; align-items: center; 
+            opacity: 0; pointer-events: none; transition: opacity 0.3s; 
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        
+        .modal-content { 
+            background: var(--surface); width: 90%; max-width: 400px; 
+            border-radius: 24px; padding: 25px; 
+            transform: scale(0.9) translateY(20px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 1px solid var(--border); position: relative; max-height: 85vh; overflow-y: auto; 
+        }
+        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+        
+        .close-btn { 
+            position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; 
+            background: var(--surface-light); border-radius: 50%; border: none; color: var(--text); 
+            font-size: 1.2em; cursor: pointer; display: flex; justify-content: center; align-items: center; 
+        }
+        .modal-icon { width: 100px; height: 100px; border-radius: 22px; object-fit: cover; margin: 0 auto 15px; display: block; border: 1px solid var(--border); }
+        .modal-title { font-size: 1.5em; font-weight: 700; text-align: center; margin-bottom: 5px; }
+        .modal-type { font-size: 0.85em; color: var(--text-muted); text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;}
+        .modal-desc { font-size: 0.95em; color: #bbb; margin-bottom: 20px; line-height: 1.5; white-space: pre-wrap;}
+        
+        .btn-install { 
+            display: block; width: 100%; padding: 15px; 
+            background: var(--accent); color: #000; 
+            text-align: center; text-decoration: none; 
+            border-radius: 12px; font-weight: 700; font-size: 1.1em; transition: 0.2s; 
+        }
+        .btn-install:active { opacity: 0.8; transform: scale(0.98); }
+        
+        .error-msg { text-align: center; color: #ff3b30; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <div id="loader"><div class="spinner"></div></div>
+
+    <header>
+        <div class="logo">DARK STORE</div>
+        <div class="menu-btn" onclick="toggleMenu()" id="menuBtn">
+            <span></span><span></span><span></span>
+        </div>
+    </header>
+
+    <div class="nav-menu" id="navMenu">
+        <a href="#">Мои приложения</a>
+        <a href="#">Добавить проект</a>
+        <a href="#">Настройки</a>
+    </div>
+
+    <main>
+        <div class="app-grid" id="appGrid"></div>
+    </main>
+
+    <div class="modal-overlay" id="appModal" onclick="closeApp(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeApp(event)">✕</button>
+            <img src="" id="mIcon" class="modal-icon" alt="Icon">
+            <div class="modal-title" id="mTitle">Название</div>
+            <div class="modal-type" id="mType">Тип</div>
+            <div class="modal-desc" id="mDesc">Описание...</div>
+            <a href="#" id="mLink" class="btn-install">Установить</a>
+        </div>
+    </div>
+
+    <script>
+        // Меню
+        function toggleMenu() {
+            document.getElementById('menuBtn').classList.toggle('active');
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+
+        // Чтение JSON и отрисовка
+        fetch('apps.json')
+            .then(response => {
+                if (!response.ok) throw new Error('Файл apps.json не найден');
+                return response.json();
+            })
+            .then(data => {
+                renderApps(data);
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                document.getElementById('appGrid').innerHTML = `<div class="error-msg">Ошибка загрузки данных.<br>Убедитесь, что файл apps.json лежит рядом с index.html.</div>`;
+                hideLoader();
+            });
+
+        function renderApps(apps) {
+            const grid = document.getElementById('appGrid');
+            grid.innerHTML = ''; 
+            
+            if(apps.length === 0) { hideLoader(); return; }
+
+            let imagesLoaded = 0;
+            const totalImages = apps.length;
+            const cards = [];
+
+            // Страховка: если картинки грузятся дольше 3 секунд, показываем сайт
+            const timeoutId = setTimeout(() => {
+                if (imagesLoaded < totalImages) {
+                    hideLoader();
+                    animateCards(cards);
+                }
+            }, 3000);
+
+            apps.forEach((app) => {
+                const card = document.createElement('div');
+                card.className = 'app-card'; 
+                card.style.opacity = '0'; 
+                card.style.transform = 'translateY(20px)'; 
+                
+                const img = new Image();
+                img.src = app.image;
+                img.className = 'app-icon';
+                img.onerror = () => { img.src = 'https://via.placeholder.com/150/111111/ffffff?text=?'; };
+                
+                img.onload = img.onerror = () => {
+                    imagesLoaded++;
+                    if (imagesLoaded === totalImages) {
+                        clearTimeout(timeoutId);
+                        hideLoader();
+                        animateCards(cards);
+                    }
+                };
+
+                card.innerHTML = `
+                    <div class="app-title">${app.name}</div>
+                    <div class="app-type">${app.type}</div>
+                `;
+                card.prepend(img);
+                card.onclick = () => openApp(app);
+                grid.appendChild(card);
+                cards.push(card);
+            });
+        }
+
+        // Функция плавного появления карточек
+        function animateCards(cards) {
+            setTimeout(() => {
+                cards.forEach((c, index) => {
+                    c.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+                    c.style.opacity = '1';
+                    c.style.transform = 'translateY(0)';
+                });
+            }, 100);
+        }
+
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            if(loader.style.display === 'none') return;
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500);
+        }
+
+        function openApp(app) {
+            document.getElementById('mTitle').innerText = app.name;
+            document.getElementById('mType').innerText = app.type;
+            document.getElementById('mDesc').innerText = app.description;
+            document.getElementById('mLink').href = app.link;
+            document.getElementById('mIcon').src = app.image;
+            document.getElementById('appModal').classList.add('active');
+        }
+
+        function closeApp(event) {
+            if(event.target.id === 'appModal' || event.target.classList.contains('close-btn')) {
+                document.getElementById('appModal').classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
