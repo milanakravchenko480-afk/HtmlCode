@@ -5,15 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dark Store</title>
     <style>
-        :root { 
-            --bg: #050505; --surface: #121212; --surface-light: #1e1e1e; 
-            --text: #e0e0e0; --text-muted: #888; --accent: #ffffff; --border: #2a2a2a; 
-            --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; 
-        }
+        /* Твои стили (остались без изменений, чтобы не ломать дизайн) */
+        :root { --bg: #050505; --surface: #121212; --surface-light: #1e1e1e; --text: #e0e0e0; --text-muted: #888; --accent: #ffffff; --border: #2a2a2a; --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); font-family: var(--font); overflow-x: hidden; line-height: 1.4; }
-        
-        /* Шапка */
         header { position: fixed; top: 0; left: 0; width: 100%; height: 60px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 100; border-bottom: 1px solid var(--border); }
         .logo { font-size: 1.2em; font-weight: 700; letter-spacing: 1px; }
         .menu-btn { cursor: pointer; display: flex; flex-direction: column; gap: 5px; padding: 5px; z-index: 101;}
@@ -21,59 +16,44 @@
         .menu-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
         .menu-btn.active span:nth-child(2) { opacity: 0; }
         .menu-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-        /* Меню */
         .nav-menu { position: fixed; top: 60px; left: 0; width: 100%; background: var(--surface); border-bottom: 1px solid var(--border); transform: translateY(-100%); opacity: 0; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 99; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
         .nav-menu.active { transform: translateY(0); opacity: 1; }
         .nav-menu a { color: var(--text); text-decoration: none; font-size: 1.1em; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
-
-        /* Сетка */
         main { padding: 80px 20px 40px; max-width: 600px; margin: 0 auto; }
         .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
-        .app-card { 
-            background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 15px; 
-            display: flex; flex-direction: column; align-items: center; text-align: center; 
-            cursor: pointer; transition: transform 0.1s ease-out, background 0.2s; 
-            opacity: 0; transform: translateY(50px) rotateX(10deg); 
-        }
+        .app-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; transition: transform 0.1s ease-out, background 0.2s; opacity: 0; transform: translateY(50px) rotateX(10deg); }
         .app-card.visible { opacity: 1; transform: translateY(0) rotateX(0deg); }
         .app-card:active { transform: scale(0.96); background: var(--surface-light); }
         .app-icon { width: 70px; height: 70px; border-radius: 16px; object-fit: cover; margin-bottom: 12px; border: 1px solid var(--border); background: #000;}
         .app-title { font-size: 0.95em; font-weight: 600; margin-bottom: 4px; }
         .app-type { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-
-        /* Модалка */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         .modal-content { background: var(--surface); width: 90%; max-width: 400px; border-radius: 24px; padding: 25px; transform: scale(0.9) translateY(20px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--border); position: relative; max-height: 85vh; overflow-y: auto; }
         .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
-        .close-btn { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; background: var(--surface-light); border-radius: 50%; border: none; color: var(--text); font-size: 1.2em; cursor: pointer; }
+        .close-btn { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; background: var(--surface-light); border-radius: 50%; border: none; color: var(--text); font-size: 1.2em; cursor: pointer; display: flex; justify-content: center; align-items: center; }
         .modal-icon { width: 100px; height: 100px; border-radius: 22px; object-fit: cover; margin: 0 auto 15px; display: block; border: 1px solid var(--border); }
         .modal-title { font-size: 1.5em; font-weight: 700; text-align: center; margin-bottom: 5px; }
         .modal-type { font-size: 0.85em; color: var(--text-muted); text-align: center; margin-bottom: 20px; text-transform: uppercase; }
         .modal-desc { font-size: 0.95em; color: #bbb; margin-bottom: 20px; line-height: 1.5; }
         .btn-install { display: block; width: 100%; padding: 15px; background: var(--accent); color: #000; text-align: center; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.1em; }
         .btn-install:active { opacity: 0.8; }
-
-        /* Форма добавления */
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 0.85em; color: var(--text-muted); margin-bottom: 5px; }
-        .form-group input, .form-group textarea, .form-group select { 
-            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); 
-            background: var(--bg); color: var(--text); font-family: var(--font); font-size: 1em;
-        }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: var(--font); font-size: 1em; }
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--text-muted); }
         .form-group textarea { resize: vertical; min-height: 80px; }
         .form-btn { width: 100%; padding: 15px; background: var(--accent); color: #000; border: none; border-radius: 12px; font-weight: 700; font-size: 1.1em; cursor: pointer; margin-top: 10px; }
         .form-btn:active { opacity: 0.8; }
-        
-        /* Блок с результатом (JSON) */
-        #jsonResult { display: none; margin-top: 20px; background: #000; padding: 15px; border-radius: 8px; border: 1px solid var(--border); font-family: monospace; font-size: 0.85em; color: #00ffcc; white-space: pre-wrap; word-break: break-all; position: relative;}
-        .copy-btn { position: absolute; top: 10px; right: 10px; background: var(--surface-light); color: var(--text); border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8em;}
         .empty-msg { text-align: center; color: var(--text-muted); margin-top: 50px; font-size: 1.1em; }
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+        .spinner { width: 30px; height: 30px; border: 2px solid rgba(255,255,255,0.1); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
+
+    <div id="loader"><div class="spinner"></div></div>
 
     <header>
         <div class="logo">DARK STORE</div>
@@ -89,55 +69,21 @@
     </div>
 
     <main>
-        <!-- Сетка приложений -->
         <div class="app-grid" id="appGrid">
-            <div class="empty-msg" id="emptyMsg">Тут пока пусто. Нажми «Добавить проект» в меню.</div>
+            <div class="empty-msg" id="emptyMsg">Загрузка...</div>
         </div>
 
-        <!-- Редактор (Форма добавления) -->
         <div id="editorArea" style="display: none;">
             <h2 style="margin-bottom: 20px; font-weight: 600;">Новый проект</h2>
-            
-            <div class="form-group">
-                <label>Название приложения</label>
-                <input type="text" id="inpName" placeholder="Например: Minecraft">
-            </div>
-
-            <div class="form-group">
-                <label>Прямая ссылка на картинку (URL)</label>
-                <input type="text" id="inpImage" placeholder="https://.../icon.png">
-            </div>
-
-            <div class="form-group">
-                <label>Тип приложения</label>
-                <select id="inpType">
-                    <option value="iOS">iOS</option>
-                    <option value="Android">Android</option>
-                    <option value="TrollStore">TrollStore</option>
-                    <option value="Jailbreak">Jailbreak</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Описание</label>
-                <textarea id="inpDesc" placeholder="Краткое описание приложения..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Прямая ссылка на скачивание</label>
-                <input type="text" id="inpLink" placeholder="https://.../app.ipa">
-            </div>
-
-            <button class="form-btn" onclick="generateJSON()">Сгенерировать JSON</button>
-
-            <div id="jsonResult">
-                <button class="copy-btn" onclick="copyJSON()">Копировать</button>
-                <pre id="jsonText"></pre>
-            </div>
+            <div class="form-group"><label>Название</label><input type="text" id="inpName" placeholder="Например: Minecraft"></div>
+            <div class="form-group"><label>Ссылка на картинку (URL)</label><input type="text" id="inpImage" placeholder="https://.../icon.png"></div>
+            <div class="form-group"><label>Тип</label><select id="inpType"><option value="iOS">iOS</option><option value="Android">Android</option><option value="TrollStore">TrollStore</option><option value="Jailbreak">Jailbreak</option></select></div>
+            <div class="form-group"><label>Описание</label><textarea id="inpDesc" placeholder="Краткое описание..."></textarea></div>
+            <div class="form-group"><label>Ссылка на скачивание</label><input type="text" id="inpLink" placeholder="https://.../app.ipa"></div>
+            <button class="form-btn" onclick="publishApp()">Опубликовать</button>
         </div>
     </main>
 
-    <!-- Модалка приложения -->
     <div class="modal-overlay" id="appModal" onclick="closeApp(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <button class="close-btn" onclick="closeApp(event)">✕</button>
@@ -150,29 +96,31 @@
     </div>
 
     <script>
-        let currentApps = []; // Сюда загрузим данные из JSON
+        // Ссылка на твой Cloudflare Worker
+        const WORKER_URL = "https://darkstore-proxy.uicache67.workers.dev";
 
-        // Инициализация при загрузке
+        let currentApps = [];
+
+        // Загрузка данных при старте
         window.onload = () => {
-            fetch('apps.json')
+            fetch('apps.json?t=' + Date.now()) // ?t=... чтобы сбросить кэш
                 .then(res => res.json())
                 .then(data => {
                     currentApps = data;
                     renderApps(currentApps);
                 })
                 .catch(err => {
-                    console.log('JSON пуст или не найден. Ждем добавления.');
+                    console.log('JSON пуст или не найден.');
                     document.getElementById('emptyMsg').style.display = 'block';
+                    hideLoader();
                 });
         };
 
-        // Управление меню
         function toggleMenu() {
             document.getElementById('menuBtn').classList.toggle('active');
             document.getElementById('navMenu').classList.toggle('active');
         }
 
-        // Показ главной (сетки)
         function showMain() {
             document.getElementById('appGrid').style.display = 'grid';
             document.getElementById('editorArea').style.display = 'none';
@@ -180,17 +128,16 @@
             renderApps(currentApps);
         }
 
-        // Показ формы добавления
         function showEditor() {
             document.getElementById('appGrid').style.display = 'none';
             document.getElementById('editorArea').style.display = 'block';
             toggleMenu();
         }
 
-        // Отрисовка карточек
         function renderApps(apps) {
             const grid = document.getElementById('appGrid');
             grid.innerHTML = '';
+            hideLoader(); // Прячем лоадер, когда данные пришли
             
             if (!apps || apps.length === 0) {
                 grid.innerHTML = '<div class="empty-msg">Тут пока пусто. Нажми «Добавить проект» в меню.</div>';
@@ -207,48 +154,66 @@
                 `;
                 card.onclick = () => openApp(app);
                 grid.appendChild(card);
-                // Триггер анимации появления
                 setTimeout(() => card.classList.add('visible'), 50);
             });
         }
 
-        // Генерация JSON-кода
-        function generateJSON() {
+        function publishApp() {
             const name = document.getElementById('inpName').value.trim();
             const image = document.getElementById('inpImage').value.trim();
             const type = document.getElementById('inpType').value;
             const desc = document.getElementById('inpDesc').value.trim();
             const link = document.getElementById('inpLink').value.trim();
 
-            if(!name || !image || !link) {
+            if (!name || !image || !link) {
                 alert('Заполни хотя бы название, картинку и ссылку!');
                 return;
             }
 
-            const newApp = {
-                name: name,
-                type: type,
-                description: desc,
-                image: image,
-                link: link
-            };
+            const newApp = { name, image, type, description: desc, link };
+            const btn = document.querySelector('.form-btn');
+            btn.innerText = 'Отправка...';
+            btn.disabled = true;
 
-            // Генерируем красивый JSON
-            const jsonString = JSON.stringify(newApp, null, 2);
-            
-            document.getElementById('jsonText').innerText = jsonString;
-            document.getElementById('jsonResult').style.display = 'block';
-        }
-
-        // Копирование в буфер
-        function copyJSON() {
-            const text = document.getElementById('jsonText').innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Скопировано! Вставь это в свой apps.json на GitHub.');
+            // Отправляем данные на Cloudflare Worker
+            fetch(WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newApp)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Приложение добавлено!');
+                    // Очищаем форму и возвращаемся
+                    document.getElementById('inpName').value = '';
+                    document.getElementById('inpImage').value = '';
+                    document.getElementById('inpDesc').value = '';
+                    document.getElementById('inpLink').value = '';
+                    
+                    // Перезагружаем страницу, чтобы подтянуть новые данные с GitHub
+                    setTimeout(() => location.reload(), 500);
+                } else {
+                    alert('Ошибка: ' + (data.error || 'Неизвестная ошибка'));
+                }
+            })
+            .catch(err => {
+                alert('Ошибка сети: ' + err.message);
+            })
+            .finally(() => {
+                btn.innerText = 'Опубликовать';
+                btn.disabled = false;
             });
         }
 
-        // Модалка
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 500);
+            }
+        }
+
         function openApp(app) {
             document.getElementById('mTitle').innerText = app.name;
             document.getElementById('mType').innerText = app.type;
