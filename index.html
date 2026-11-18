@@ -5,51 +5,145 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dark Store</title>
     <style>
-        :root { --bg: #050505; --surface: #121212; --surface-light: #1e1e1e; --text: #e0e0e0; --text-muted: #888; --accent: #ffffff; --border: #2a2a2a; --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
+        :root { 
+            --bg: #050505; 
+            --surface: #121212; 
+            --surface-light: #1e1e1e; 
+            --text: #e0e0e0; 
+            --text-muted: #888; 
+            --accent: #ffffff; 
+            --border: #2a2a2a; 
+            --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; 
+            --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Кривая пружины */
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); font-family: var(--font); overflow-x: hidden; line-height: 1.4; }
-        header { position: fixed; top: 0; left: 0; width: 100%; height: 60px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 100; border-bottom: 1px solid var(--border); }
-        .logo { font-size: 1.2em; font-weight: 700; letter-spacing: 1px; }
-        .menu-btn { cursor: pointer; display: flex; flex-direction: column; gap: 5px; padding: 5px; z-index: 101;}
-        .menu-btn span { display: block; width: 24px; height: 2px; background-color: var(--text); transition: 0.3s; }
-        .menu-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-        .menu-btn.active span:nth-child(2) { opacity: 0; }
-        .menu-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-        .nav-menu { position: fixed; top: 60px; left: 0; width: 100%; background: var(--surface); border-bottom: 1px solid var(--border); transform: translateY(-100%); opacity: 0; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 99; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+
+        /* --- ШАПКА С ЭФФЕКТОМ СТЕКЛА --- */
+        header { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px; padding: 0 20px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); 
+            transition: all 0.3s ease;
+        }
+        header.scrolled { height: 50px; background: rgba(5, 5, 5, 0.9); }
+        .logo { font-size: 1.2em; font-weight: 800; letter-spacing: 2px; background: linear-gradient(90deg, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* --- ГАМБУРГЕР (АНИМАЦИЯ ПРУЖИНЫ) --- */
+        .menu-btn { cursor: pointer; display: flex; flex-direction: column; gap: 6px; padding: 10px; z-index: 101; transition: transform 0.3s var(--spring); }
+        .menu-btn:active { transform: scale(0.8); }
+        .menu-btn span { display: block; width: 26px; height: 2px; background-color: var(--text); transition: 0.4s var(--spring); border-radius: 2px; }
+        .menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .menu-btn.active span:nth-child(2) { opacity: 0; transform: translateX(-10px); }
+        .menu-btn.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+        /* --- ВЫПАДАЮЩЕЕ МЕНЮ (ЭФФЕКТ ПАДЕНИЯ) --- */
+        .nav-menu { 
+            position: fixed; top: 60px; left: 0; width: 100%; 
+            background: var(--surface); border-bottom: 1px solid var(--border); 
+            transform: translateY(-120%); opacity: 0; 
+            transition: transform 0.5s var(--spring), opacity 0.3s ease; 
+            z-index: 99; padding: 20px; display: flex; flex-direction: column; gap: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
         .nav-menu.active { transform: translateY(0); opacity: 1; }
-        .nav-menu a { color: var(--text); text-decoration: none; font-size: 1.1em; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
-        main { padding: 80px 20px 40px; max-width: 600px; margin: 0 auto; }
+        .nav-menu a { 
+            color: var(--text); text-decoration: none; font-size: 1.1em; padding: 15px; 
+            border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid transparent;
+            transition: 0.2s ease; display: flex; align-items: center; gap: 10px;
+        }
+        .nav-menu a:hover, .nav-menu a:active { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); transform: translateX(5px); }
+
+        /* --- СЕТКА КАРТОЧЕК --- */
+        main { padding: 80px 20px 40px; max-width: 600px; margin: 0 auto; perspective: 1000px; }
         .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
-        .app-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; transition: transform 0.1s ease-out, background 0.2s; opacity: 0; transform: translateY(50px) rotateX(10deg); }
-        .app-card.visible { opacity: 1; transform: translateY(0) rotateX(0deg); }
-        .app-card:active { transform: scale(0.96); background: var(--surface-light); }
-        .app-icon { width: 70px; height: 70px; border-radius: 16px; object-fit: cover; margin-bottom: 12px; border: 1px solid var(--border); background: #000;}
-        .app-title { font-size: 0.95em; font-weight: 600; margin-bottom: 4px; }
-        .app-type { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        
+        /* Карточка с эффектом "прыжка" и 3D */
+        .app-card { 
+            background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px; 
+            display: flex; flex-direction: column; align-items: center; text-align: center; 
+            cursor: pointer; 
+            transition: transform 0.3s var(--spring), box-shadow 0.3s, background 0.3s; 
+            opacity: 0; transform: translateY(60px) scale(0.8); 
+            will-change: transform;
+        }
+        .app-card.visible { opacity: 1; transform: translateY(0) scale(1); }
+        
+        /* Упругое нажатие и свечение */
+        .app-card:active { 
+            transform: scale(0.92) !important; 
+            background: var(--surface-light); 
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        
+        /* 3D наклон при наведении (для ПК) */
+        @media (hover: hover) {
+            .app-card:hover { 
+                transform: translateY(-5px) rotateX(5deg) rotateY(5deg); 
+                box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+                border-color: rgba(255,255,255,0.2);
+            }
+        }
+
+        .app-icon { width: 70px; height: 70px; border-radius: 18px; object-fit: cover; margin-bottom: 15px; border: 1px solid var(--border); background: #000; transition: transform 0.3s var(--spring); }
+        .app-card:active .app-icon { transform: scale(0.9) rotate(-5deg); }
+        .app-title { font-size: 1em; font-weight: 600; margin-bottom: 5px; }
+        .app-type { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- МОДАЛКА (ВЫПРЫГИВАЕТ С ПРУЖИНОЙ) --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-content { background: var(--surface); width: 90%; max-width: 400px; border-radius: 24px; padding: 25px; transform: scale(0.9) translateY(20px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--border); position: relative; max-height: 85vh; overflow-y: auto; }
+        .modal-content { background: var(--surface); width: 90%; max-width: 400px; border-radius: 28px; padding: 30px; transform: scale(0.7) translateY(100px); transition: transform 0.5s var(--spring); border: 1px solid var(--border); position: relative; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
         .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
-        .close-btn { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; background: var(--surface-light); border-radius: 50%; border: none; color: var(--text); font-size: 1.2em; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-        .modal-icon { width: 100px; height: 100px; border-radius: 22px; object-fit: cover; margin: 0 auto 15px; display: block; border: 1px solid var(--border); }
-        .modal-title { font-size: 1.5em; font-weight: 700; text-align: center; margin-bottom: 5px; }
-        .modal-type { font-size: 0.85em; color: var(--text-muted); text-align: center; margin-bottom: 20px; text-transform: uppercase; }
-        .modal-desc { font-size: 0.95em; color: #bbb; margin-bottom: 20px; line-height: 1.5; }
-        .btn-install { display: block; width: 100%; padding: 15px; background: var(--accent); color: #000; text-align: center; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.1em; }
-        .btn-install:active { opacity: 0.8; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 0.85em; color: var(--text-muted); margin-bottom: 5px; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: var(--font); font-size: 1em; }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--text-muted); }
-        .form-group textarea { resize: vertical; min-height: 80px; }
-        .form-btn { width: 100%; padding: 15px; background: var(--accent); color: #000; border: none; border-radius: 12px; font-weight: 700; font-size: 1.1em; cursor: pointer; margin-top: 10px; }
-        .form-btn:active { opacity: 0.8; }
-        .empty-msg { text-align: center; color: var(--text-muted); margin-top: 50px; font-size: 1.1em; }
+        
+        .close-btn { position: absolute; top: 15px; right: 15px; width: 36px; height: 36px; background: var(--surface-light); border-radius: 50%; border: none; color: var(--text); font-size: 1.2em; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s var(--spring); }
+        .close-btn:active { transform: scale(0.8) rotate(90deg); background: #333; }
+        
+        .modal-icon { width: 110px; height: 110px; border-radius: 26px; object-fit: cover; margin: 0 auto 20px; display: block; border: 1px solid var(--border); box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: iconPop 0.6s var(--spring) both; }
+        @keyframes iconPop { 0% { transform: scale(0.5) translateY(20px); } 100% { transform: scale(1) translateY(0); } }
+        
+        .modal-title { font-size: 1.6em; font-weight: 800; text-align: center; margin-bottom: 5px; }
+        .modal-type { font-size: 0.85em; color: var(--text-muted); text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        .modal-desc { font-size: 0.95em; color: #bbb; margin-bottom: 25px; line-height: 1.6; text-align: center; }
+        
+        .btn-install { 
+            display: block; width: 100%; padding: 16px; background: var(--accent); color: #000; 
+            text-align: center; text-decoration: none; border-radius: 16px; font-weight: 800; font-size: 1.1em; 
+            transition: 0.2s var(--spring); border: 2px solid transparent;
+        }
+        .btn-install:active { transform: scale(0.95); background: #ccc; }
+
+        /* --- ФОРМА --- */
+        .form-group { margin-bottom: 15px; animation: slideIn 0.5s var(--spring) both; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        .form-group label { display: block; font-size: 0.85em; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
+        .form-group input, .form-group textarea, .form-group select { 
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); 
+            background: var(--bg); color: var(--text); font-family: var(--font); font-size: 1em; 
+            transition: 0.3s ease; 
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { 
+            outline: none; border-color: var(--text-muted); background: #111; box-shadow: 0 0 0 3px rgba(255,255,255,0.05); 
+        }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        
+        .form-btn { width: 100%; padding: 16px; background: var(--accent); color: #000; border: none; border-radius: 14px; font-weight: 800; font-size: 1.1em; cursor: pointer; margin-top: 10px; transition: 0.2s var(--spring); }
+        .form-btn:active { transform: scale(0.95); }
+        
+        .empty-msg { text-align: center; color: var(--text-muted); margin-top: 50px; font-size: 1.1em; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* --- БЛОК JSON --- */
+        #jsonResult { display: none; margin-top: 20px; background: #000; padding: 20px; border-radius: 14px; border: 1px solid var(--border); font-family: "Courier New", monospace; font-size: 0.9em; color: #00ffcc; white-space: pre-wrap; word-break: break-all; position: relative; animation: slideUp 0.4s var(--spring) both; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .copy-btn { margin-top: 15px; width: 100%; background: #333; color: #fff; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.2s var(--spring); }
+        .copy-btn:active { transform: scale(0.95); background: #555; }
     </style>
 </head>
 <body>
 
-    <header>
+    <header id="mainHeader">
         <div class="logo">DARK STORE</div>
         <div class="menu-btn" onclick="toggleMenu()" id="menuBtn">
             <span></span><span></span><span></span>
@@ -57,9 +151,9 @@
     </header>
 
     <div class="nav-menu" id="navMenu">
-        <a href="#" onclick="showMain()">Мои приложения</a>
-        <a href="#" onclick="showEditor()">Добавить проект</a>
-        <a href="#" onclick="alert('Настройки в разработке')">Настройки</a>
+        <a href="#" onclick="showMain()">🏠 Мои приложения</a>
+        <a href="#" onclick="showEditor()">➕ Добавить проект</a>
+        <a href="#" onclick="alert('Настройки в разработке')">⚙️ Настройки</a>
     </div>
 
     <main>
@@ -68,13 +162,20 @@
         </div>
 
         <div id="editorArea" style="display: none;">
-            <h2 style="margin-bottom: 20px; font-weight: 600;">Новый проект</h2>
+            <h2 style="margin-bottom: 25px; font-weight: 800; font-size: 1.5em;">Новый проект</h2>
+            
             <div class="form-group"><label>Название</label><input type="text" id="inpName" placeholder="Например: Minecraft"></div>
             <div class="form-group"><label>Ссылка на картинку (URL)</label><input type="text" id="inpImage" placeholder="https://.../icon.png"></div>
             <div class="form-group"><label>Тип</label><select id="inpType"><option value="iOS">iOS</option><option value="Android">Android</option><option value="TrollStore">TrollStore</option><option value="Jailbreak">Jailbreak</option></select></div>
             <div class="form-group"><label>Описание</label><textarea id="inpDesc" placeholder="Краткое описание..."></textarea></div>
             <div class="form-group"><label>Ссылка на скачивание</label><input type="text" id="inpLink" placeholder="https://.../app.ipa"></div>
-            <button class="form-btn" onclick="proposeApp()">Предложить изменение</button>
+            
+            <button class="form-btn" onclick="generateJSON()">Сгенерировать JSON</button>
+
+            <div id="jsonResult">
+                <pre id="jsonText"></pre>
+                <button class="copy-btn" onclick="copyJSON()">📋 Скопировать в буфер</button>
+            </div>
         </div>
     </main>
 
@@ -97,7 +198,6 @@
         let currentApps = [];
 
         window.onload = () => {
-            // Просто загружаем данные для отображения, используя публичный API
             fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}?t=` + Date.now())
                 .then(res => res.json())
                 .then(data => {
@@ -110,6 +210,16 @@
                     document.getElementById('emptyMsg').style.display = 'block';
                 });
         };
+
+        // Эффект уменьшения шапки при скролле
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('mainHeader');
+            if (window.scrollY > 20) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
 
         function toggleMenu() {
             document.getElementById('menuBtn').classList.toggle('active');
@@ -138,7 +248,7 @@
                 return;
             }
 
-            apps.forEach(app => {
+            apps.forEach((app, index) => {
                 const card = document.createElement('div');
                 card.className = 'app-card';
                 card.innerHTML = `
@@ -148,11 +258,12 @@
                 `;
                 card.onclick = () => openApp(app);
                 grid.appendChild(card);
-                setTimeout(() => card.classList.add('visible'), 50);
+                // Задержка для эффекта "волны"
+                setTimeout(() => card.classList.add('visible'), 50 + (index * 50));
             });
         }
 
-        function proposeApp() {
+        function generateJSON() {
             const name = document.getElementById('inpName').value.trim();
             const image = document.getElementById('inpImage').value.trim();
             const type = document.getElementById('inpType').value;
@@ -165,18 +276,18 @@
             }
 
             const newApp = { name, image, type, description: desc, link };
-            const newJson = JSON.stringify([...currentApps, newApp], null, 2);
+            const jsonString = JSON.stringify(newApp, null, 2);
             
-            // GitHub позволяет открыть страницу редактирования файла.
-            // Мы передаем новый контент в URL (для простоты, хотя это может быть длинно)
-            // Более надежный способ - скопировать в буфер.
-            
-            // ВАРИАНТ: Копируем в буфер и открываем страницу редактирования
-            navigator.clipboard.writeText(newJson).then(() => {
-                alert('JSON скопирован в буфер! Сейчас откроется страница GitHub. Вставь этот код в файл и нажми "Commit changes".');
-                window.open(`https://github.com/${OWNER}/${REPO}/edit/main/${FILE_PATH}`, '_blank');
+            document.getElementById('jsonText').innerText = jsonString;
+            document.getElementById('jsonResult').style.display = 'block';
+        }
+
+        function copyJSON() {
+            const text = document.getElementById('jsonText').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Скопировано! Вставь этот код в apps.json на GitHub.');
             }).catch(err => {
-                alert('Не удалось скопировать. Пожалуйста, скопируйте вручную:\n\n' + newJson);
+                alert('Ошибка копирования. Выдели текст вручную.');
             });
         }
 
