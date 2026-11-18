@@ -3,157 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dark Store</title>
+    <title>Dy1ce Packages</title>
     <style>
         :root { 
-            --bg: #050505; 
-            --surface: #121212; 
-            --surface-light: #1e1e1e; 
-            --text: #e0e0e0; 
-            --text-muted: #888; 
+            --bg: #000000; 
+            --surface: #0a0a0a; 
+            --surface-light: #141414; 
+            --text: #ffffff; 
+            --text-muted: #666666; 
             --accent: #ffffff; 
-            --border: #2a2a2a; 
+            --border: #222222; 
             --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; 
-            --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Кривая пружины */
+            --spring: cubic-bezier(0.16, 1, 0.3, 1);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); font-family: var(--font); overflow-x: hidden; line-height: 1.4; }
+        body { background-color: var(--bg); color: var(--text); font-family: var(--font); overflow-x: hidden; line-height: 1.4; -webkit-font-smoothing: antialiased; }
 
-        /* --- ШАПКА С ЭФФЕКТОМ СТЕКЛА --- */
+        /* Шапка */
         header { 
             position: fixed; top: 0; left: 0; width: 100%; height: 60px; padding: 0 20px; 
             display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-            z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); 
-            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            z-index: 100; border-bottom: 1px solid var(--border); 
         }
-        header.scrolled { height: 50px; background: rgba(5, 5, 5, 0.9); }
-        .logo { font-size: 1.2em; font-weight: 800; letter-spacing: 2px; background: linear-gradient(90deg, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo { font-size: 1.1em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        
+        /* Гамбургер */
+        .menu-btn { cursor: pointer; display: flex; flex-direction: column; gap: 6px; padding: 5px; z-index: 101; }
+        .menu-btn span { display: block; width: 24px; height: 1.5px; background-color: var(--text); transition: 0.3s ease; }
+        .menu-btn.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+        .menu-btn.active span:nth-child(2) { opacity: 0; }
+        .menu-btn.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
-        /* --- ГАМБУРГЕР (АНИМАЦИЯ ПРУЖИНЫ) --- */
-        .menu-btn { cursor: pointer; display: flex; flex-direction: column; gap: 6px; padding: 10px; z-index: 101; transition: transform 0.3s var(--spring); }
-        .menu-btn:active { transform: scale(0.8); }
-        .menu-btn span { display: block; width: 26px; height: 2px; background-color: var(--text); transition: 0.4s var(--spring); border-radius: 2px; }
-        .menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-        .menu-btn.active span:nth-child(2) { opacity: 0; transform: translateX(-10px); }
-        .menu-btn.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-
-        /* --- ВЫПАДАЮЩЕЕ МЕНЮ (ЭФФЕКТ ПАДЕНИЯ) --- */
+        /* Меню */
         .nav-menu { 
             position: fixed; top: 60px; left: 0; width: 100%; 
-            background: var(--surface); border-bottom: 1px solid var(--border); 
-            transform: translateY(-120%); opacity: 0; 
-            transition: transform 0.5s var(--spring), opacity 0.3s ease; 
-            z-index: 99; padding: 20px; display: flex; flex-direction: column; gap: 15px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: var(--bg); border-bottom: 1px solid var(--border); 
+            transform: translateY(-100%); opacity: 0; 
+            transition: transform 0.4s var(--spring), opacity 0.3s ease; 
+            z-index: 99; padding: 10px 0; display: flex; flex-direction: column;
         }
         .nav-menu.active { transform: translateY(0); opacity: 1; }
         .nav-menu a { 
-            color: var(--text); text-decoration: none; font-size: 1.1em; padding: 15px; 
-            border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid transparent;
-            transition: 0.2s ease; display: flex; align-items: center; gap: 10px;
+            color: var(--text-muted); text-decoration: none; font-size: 0.95em; padding: 15px 20px; 
+            border-bottom: 1px solid var(--border); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;
         }
-        .nav-menu a:hover, .nav-menu a:active { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); transform: translateX(5px); }
+        .nav-menu a:last-child { border-bottom: none; }
+        .nav-menu a:hover, .nav-menu a:active { color: var(--text); background: var(--surface); }
 
-        /* --- СЕТКА КАРТОЧЕК --- */
-        main { padding: 80px 20px 40px; max-width: 600px; margin: 0 auto; perspective: 1000px; }
-        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+        /* Основной контент */
+        main { padding: 80px 20px 40px; max-width: 600px; margin: 0 auto; }
+        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
         
-        /* Карточка с эффектом "прыжка" и 3D */
+        /* Карточки */
         .app-card { 
-            background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px; 
-            display: flex; flex-direction: column; align-items: center; text-align: center; 
-            cursor: pointer; 
-            transition: transform 0.3s var(--spring), box-shadow 0.3s, background 0.3s; 
-            opacity: 0; transform: translateY(60px) scale(0.8); 
-            will-change: transform;
+            background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; 
+            display: flex; flex-direction: column; align-items: flex-start; text-align: left; 
+            cursor: pointer; transition: 0.3s var(--spring); 
+            opacity: 0; transform: translateY(20px); 
         }
-        .app-card.visible { opacity: 1; transform: translateY(0) scale(1); }
+        .app-card.visible { opacity: 1; transform: translateY(0); }
+        .app-card:active { transform: scale(0.97); background: var(--surface-light); }
         
-        /* Упругое нажатие и свечение */
-        .app-card:active { 
-            transform: scale(0.92) !important; 
-            background: var(--surface-light); 
-            box-shadow: 0 0 20px rgba(255,255,255,0.1);
-        }
-        
-        /* 3D наклон при наведении (для ПК) */
-        @media (hover: hover) {
-            .app-card:hover { 
-                transform: translateY(-5px) rotateX(5deg) rotateY(5deg); 
-                box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-                border-color: rgba(255,255,255,0.2);
-            }
-        }
+        .app-icon { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; margin-bottom: 15px; border: 1px solid var(--border); background: #000; }
+        .app-title { font-size: 0.95em; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .app-type { font-size: 0.7em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
-        .app-icon { width: 70px; height: 70px; border-radius: 18px; object-fit: cover; margin-bottom: 15px; border: 1px solid var(--border); background: #000; transition: transform 0.3s var(--spring); }
-        .app-card:active .app-icon { transform: scale(0.9) rotate(-5deg); }
-        .app-title { font-size: 1em; font-weight: 600; margin-bottom: 5px; }
-        .app-type { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-
-        /* --- МОДАЛКА (ВЫПРЫГИВАЕТ С ПРУЖИНОЙ) --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-content { background: var(--surface); width: 90%; max-width: 400px; border-radius: 28px; padding: 30px; transform: scale(0.7) translateY(100px); transition: transform 0.5s var(--spring); border: 1px solid var(--border); position: relative; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
-        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
-        
-        .close-btn { position: absolute; top: 15px; right: 15px; width: 36px; height: 36px; background: var(--surface-light); border-radius: 50%; border: none; color: var(--text); font-size: 1.2em; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s var(--spring); }
-        .close-btn:active { transform: scale(0.8) rotate(90deg); background: #333; }
-        
-        .modal-icon { width: 110px; height: 110px; border-radius: 26px; object-fit: cover; margin: 0 auto 20px; display: block; border: 1px solid var(--border); box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: iconPop 0.6s var(--spring) both; }
-        @keyframes iconPop { 0% { transform: scale(0.5) translateY(20px); } 100% { transform: scale(1) translateY(0); } }
-        
-        .modal-title { font-size: 1.6em; font-weight: 800; text-align: center; margin-bottom: 5px; }
-        .modal-type { font-size: 0.85em; color: var(--text-muted); text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
-        .modal-desc { font-size: 0.95em; color: #bbb; margin-bottom: 25px; line-height: 1.6; text-align: center; }
-        
-        .btn-install { 
-            display: block; width: 100%; padding: 16px; background: var(--accent); color: #000; 
-            text-align: center; text-decoration: none; border-radius: 16px; font-weight: 800; font-size: 1.1em; 
-            transition: 0.2s var(--spring); border: 2px solid transparent;
-        }
-        .btn-install:active { transform: scale(0.95); background: #ccc; }
-
-        /* --- ФОРМА --- */
-        .form-group { margin-bottom: 15px; animation: slideIn 0.5s var(--spring) both; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-        .form-group label { display: block; font-size: 0.85em; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
-        .form-group input, .form-group textarea, .form-group select { 
-            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); 
-            background: var(--bg); color: var(--text); font-family: var(--font); font-size: 1em; 
+        /* Форма */
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-group label { display: block; font-size: 0.75em; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .form-group input, .form-group textarea { 
+            width: 100%; padding: 15px; border-radius: 8px; border: 1px solid var(--border); 
+            background: var(--surface); color: var(--text); font-family: var(--font); font-size: 0.95em; 
             transition: 0.3s ease; 
         }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { 
-            outline: none; border-color: var(--text-muted); background: #111; box-shadow: 0 0 0 3px rgba(255,255,255,0.05); 
-        }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #444; background: var(--surface-light); }
         .form-group textarea { resize: vertical; min-height: 100px; }
         
-        .form-btn { width: 100%; padding: 16px; background: var(--accent); color: #000; border: none; border-radius: 14px; font-weight: 800; font-size: 1.1em; cursor: pointer; margin-top: 10px; transition: 0.2s var(--spring); }
-        .form-btn:active { transform: scale(0.95); }
+        /* КАСТОМНЫЙ SELECT */
+        .custom-select-wrapper { position: relative; user-select: none; }
+        .custom-select-trigger {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; border-radius: 8px; border: 1px solid var(--border); 
+            background: var(--surface); color: var(--text); font-size: 0.95em; cursor: pointer;
+            transition: 0.3s;
+        }
+        .custom-select-trigger:active { background: var(--surface-light); }
+        .custom-select-trigger::after {
+            content: ''; display: block; width: 8px; height: 8px;
+            border-right: 1.5px solid var(--text); border-bottom: 1.5px solid var(--text);
+            transform: rotate(45deg); transition: 0.3s; margin-top: -4px;
+        }
+        .custom-select-wrapper.open .custom-select-trigger::after { transform: rotate(-135deg); margin-top: 4px; }
         
-        .empty-msg { text-align: center; color: var(--text-muted); margin-top: 50px; font-size: 1.1em; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        .custom-options {
+            position: absolute; top: 100%; left: 0; right: 0; margin-top: 5px;
+            background: var(--surface-light); border: 1px solid var(--border); border-radius: 8px;
+            overflow: hidden; z-index: 10; opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: 0.3s var(--spring); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .custom-select-wrapper.open .custom-options { opacity: 1; visibility: visible; transform: translateY(0); }
+        
+        .custom-option {
+            padding: 15px; font-size: 0.9em; color: var(--text-muted); cursor: pointer; transition: 0.2s;
+            border-bottom: 1px solid var(--border);
+        }
+        .custom-option:last-child { border-bottom: none; }
+        .custom-option:hover { background: var(--surface); color: var(--text); }
+        .custom-option.selected { color: var(--text); font-weight: 600; background: var(--surface); }
 
-        /* --- БЛОК JSON --- */
-        #jsonResult { display: none; margin-top: 20px; background: #000; padding: 20px; border-radius: 14px; border: 1px solid var(--border); font-family: "Courier New", monospace; font-size: 0.9em; color: #00ffcc; white-space: pre-wrap; word-break: break-all; position: relative; animation: slideUp 0.4s var(--spring) both; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .copy-btn { margin-top: 15px; width: 100%; background: #333; color: #fff; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.2s var(--spring); }
-        .copy-btn:active { transform: scale(0.95); background: #555; }
+        /* Кнопки */
+        .form-btn { width: 100%; padding: 18px; background: var(--text); color: #000; border: none; border-radius: 8px; font-weight: 700; font-size: 1em; cursor: pointer; margin-top: 10px; transition: 0.2s var(--spring); text-transform: uppercase; letter-spacing: 1px; }
+        .form-btn:active { transform: scale(0.98); opacity: 0.8; }
+        
+        /* Блок JSON */
+        #jsonResult { display: none; margin-top: 20px; background: var(--surface); padding: 20px; border-radius: 8px; border: 1px solid var(--border); font-family: "Courier New", monospace; font-size: 0.85em; color: #fff; white-space: pre-wrap; word-break: break-all; position: relative; }
+        .copy-btn { margin-top: 15px; width: 100%; background: var(--surface-light); color: var(--text); border: 1px solid var(--border); padding: 15px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; text-transform: uppercase; font-size: 0.8em; letter-spacing: 1px;}
+        .copy-btn:active { background: var(--surface); }
+        
+        .empty-msg { text-align: center; color: var(--text-muted); margin-top: 50px; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;}
+
+        /* Модалка */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 1000; display: flex; justify-content: center; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-content { background: var(--surface); width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 30px 20px; transform: translateY(100%); transition: transform 0.4s var(--spring); border-top: 1px solid var(--border); position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        
+        .close-btn { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; background: var(--surface-light); border-radius: 50%; border: none; color: var(--text-muted); font-size: 1em; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .close-btn:active { color: var(--text); transform: scale(0.9); }
+        
+        .modal-icon { width: 80px; height: 80px; border-radius: 16px; object-fit: cover; margin-bottom: 20px; border: 1px solid var(--border); }
+        .modal-title { font-size: 1.4em; font-weight: 700; margin-bottom: 5px; }
+        .modal-type { font-size: 0.75em; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        .modal-desc { font-size: 0.9em; color: #999; margin-bottom: 30px; line-height: 1.6; }
+        
+        .btn-install { display: block; width: 100%; padding: 18px; background: var(--text); color: #000; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 1em; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-install:active { transform: scale(0.98); opacity: 0.8; }
     </style>
 </head>
 <body>
 
-    <header id="mainHeader">
-        <div class="logo">DARK STORE</div>
+    <header>
+        <div class="logo">Dy1ce Packages</div>
         <div class="menu-btn" onclick="toggleMenu()" id="menuBtn">
             <span></span><span></span><span></span>
         </div>
     </header>
 
     <div class="nav-menu" id="navMenu">
-        <a href="#" onclick="showMain()">🏠 Мои приложения</a>
-        <a href="#" onclick="showEditor()">➕ Добавить проект</a>
-        <a href="#" onclick="alert('Настройки в разработке')">⚙️ Настройки</a>
+        <a href="#" onclick="showMain()">Мои приложения</a>
+        <a href="#" onclick="showEditor()">Добавить проект</a>
     </div>
 
     <main>
@@ -162,19 +161,32 @@
         </div>
 
         <div id="editorArea" style="display: none;">
-            <h2 style="margin-bottom: 25px; font-weight: 800; font-size: 1.5em;">Новый проект</h2>
+            <div class="form-group"><label>Название</label><input type="text" id="inpName" placeholder="Minecraft"></div>
+            <div class="form-group"><label>Ссылка на картинку</label><input type="text" id="inpImage" placeholder="https://.../icon.png"></div>
             
-            <div class="form-group"><label>Название</label><input type="text" id="inpName" placeholder="Например: Minecraft"></div>
-            <div class="form-group"><label>Ссылка на картинку (URL)</label><input type="text" id="inpImage" placeholder="https://.../icon.png"></div>
-            <div class="form-group"><label>Тип</label><select id="inpType"><option value="iOS">iOS</option><option value="Android">Android</option><option value="TrollStore">TrollStore</option><option value="Jailbreak">Jailbreak</option></select></div>
-            <div class="form-group"><label>Описание</label><textarea id="inpDesc" placeholder="Краткое описание..."></textarea></div>
+            <!-- КАСТОМНЫЙ SELECT -->
+            <div class="form-group">
+                <label>Тип</label>
+                <div class="custom-select-wrapper" id="customSelect">
+                    <div class="custom-select-trigger" onclick="toggleSelect()" id="selectTrigger">iOS</div>
+                    <div class="custom-options">
+                        <div class="custom-option selected" onclick="selectOption(this, 'iOS')">iOS</div>
+                        <div class="custom-option" onclick="selectOption(this, 'Android')">Android</div>
+                        <div class="custom-option" onclick="selectOption(this, 'TrollStore')">TrollStore</div>
+                        <div class="custom-option" onclick="selectOption(this, 'Jailbreak')">Jailbreak</div>
+                    </div>
+                </div>
+                <input type="hidden" id="inpType" value="iOS">
+            </div>
+
+            <div class="form-group"><label>Описание</label><textarea id="inpDesc" placeholder="Описание..."></textarea></div>
             <div class="form-group"><label>Ссылка на скачивание</label><input type="text" id="inpLink" placeholder="https://.../app.ipa"></div>
             
-            <button class="form-btn" onclick="generateJSON()">Сгенерировать JSON</button>
+            <button class="form-btn" onclick="generateJSON()">Сгенерировать</button>
 
             <div id="jsonResult">
                 <pre id="jsonText"></pre>
-                <button class="copy-btn" onclick="copyJSON()">📋 Скопировать в буфер</button>
+                <button class="copy-btn" onclick="copyJSON()">Копировать</button>
             </div>
         </div>
     </main>
@@ -206,18 +218,29 @@
                     renderApps(currentApps);
                 })
                 .catch(err => {
-                    console.log('JSON пуст или не найден.');
+                    console.log('JSON пуст.');
                     document.getElementById('emptyMsg').style.display = 'block';
                 });
         };
 
-        // Эффект уменьшения шапки при скролле
-        window.addEventListener('scroll', () => {
-            const header = document.getElementById('mainHeader');
-            if (window.scrollY > 20) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
+        // Логика кастомного селекта
+        function toggleSelect() {
+            document.getElementById('customSelect').classList.toggle('open');
+        }
+
+        function selectOption(el, value) {
+            document.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('selectTrigger').innerText = value;
+            document.getElementById('inpType').value = value;
+            document.getElementById('customSelect').classList.remove('open');
+        }
+
+        // Закрыть селект при клике вне его
+        document.addEventListener('click', function(e) {
+            const select = document.getElementById('customSelect');
+            if (!select.contains(e.target)) {
+                select.classList.remove('open');
             }
         });
 
@@ -244,7 +267,7 @@
             grid.innerHTML = '';
             
             if (!apps || apps.length === 0) {
-                grid.innerHTML = '<div class="empty-msg">Тут пока пусто. Нажми «Добавить проект» в меню.</div>';
+                grid.innerHTML = '<div class="empty-msg">Тут пока пусто</div>';
                 return;
             }
 
@@ -258,7 +281,6 @@
                 `;
                 card.onclick = () => openApp(app);
                 grid.appendChild(card);
-                // Задержка для эффекта "волны"
                 setTimeout(() => card.classList.add('visible'), 50 + (index * 50));
             });
         }
@@ -271,7 +293,7 @@
             const link = document.getElementById('inpLink').value.trim();
 
             if (!name || !image || !link) {
-                alert('Заполни хотя бы название, картинку и ссылку!');
+                alert('Заполни поля');
                 return;
             }
 
@@ -285,9 +307,7 @@
         function copyJSON() {
             const text = document.getElementById('jsonText').innerText;
             navigator.clipboard.writeText(text).then(() => {
-                alert('Скопировано! Вставь этот код в apps.json на GitHub.');
-            }).catch(err => {
-                alert('Ошибка копирования. Выдели текст вручную.');
+                alert('Скопировано');
             });
         }
 
