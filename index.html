@@ -74,7 +74,7 @@
             <div class="form-group"><label>Тип</label><select id="inpType"><option value="iOS">iOS</option><option value="Android">Android</option><option value="TrollStore">TrollStore</option><option value="Jailbreak">Jailbreak</option></select></div>
             <div class="form-group"><label>Описание</label><textarea id="inpDesc" placeholder="Краткое описание..."></textarea></div>
             <div class="form-group"><label>Ссылка на скачивание</label><input type="text" id="inpLink" placeholder="https://.../app.ipa"></div>
-            <button class="form-btn" onclick="publishApp()">Опубликовать</button>
+            <button class="form-btn" onclick="proposeApp()">Предложить изменение</button>
         </div>
     </main>
 
@@ -90,10 +90,6 @@
     </div>
 
     <script>
-        // Твой НОВЫЙ токен в Base64
-        const ENCODED_TOKEN = "Z2hwX1VXVnhEMXVzdDZyd2ZyVU9xc2UzV25XODVXRm5XNzAwME81NQ==";
-        const GITHUB_TOKEN = atob(ENCODED_TOKEN);
-        
         const OWNER = "milanakravchenko480-afk";
         const REPO = "HtmlCode";
         const FILE_PATH = "apps.json";
@@ -101,6 +97,7 @@
         let currentApps = [];
 
         window.onload = () => {
+            // Просто загружаем данные для отображения, используя публичный API
             fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}?t=` + Date.now())
                 .then(res => res.json())
                 .then(data => {
@@ -155,7 +152,7 @@
             });
         }
 
-        async function publishApp() {
+        function proposeApp() {
             const name = document.getElementById('inpName').value.trim();
             const image = document.getElementById('inpImage').value.trim();
             const type = document.getElementById('inpType').value;
@@ -168,55 +165,19 @@
             }
 
             const newApp = { name, image, type, description: desc, link };
-            const btn = document.querySelector('.form-btn');
-            btn.innerText = 'Отправка...';
-            btn.disabled = true;
-
-            try {
-                // 1. Получаем текущий файл (чтобы узнать SHA)
-                const getRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`);
-                let currentContent = [];
-                let sha = null;
-
-                if (getRes.ok) {
-                    const data = await getRes.json();
-                    sha = data.sha;
-                    const decoded = atob(data.content);
-                    currentContent = JSON.parse(decoded);
-                }
-
-                // 2. Добавляем новое приложение
-                currentContent.push(newApp);
-                const newContentEncoded = btoa(JSON.stringify(currentContent, null, 2));
-
-                // 3. Отправляем PUT запрос в GitHub
-                const putRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`, // ИСПОЛЬЗУЕМ ФОРМАТ token
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `Добавлено приложение: ${newApp.name}`,
-                        content: newContentEncoded,
-                        sha: sha
-                    })
-                });
-
-                if (putRes.ok) {
-                    alert('Приложение добавлено!');
-                    location.reload(); // Перезагружаем страницу
-                } else {
-                    const err = await putRes.text();
-                    alert('Ошибка GitHub: ' + err);
-                }
-            } catch (e) {
-                alert('Ошибка сети: ' + e.message);
-            } finally {
-                btn.innerText = 'Опубликовать';
-                btn.disabled = false;
-            }
+            const newJson = JSON.stringify([...currentApps, newApp], null, 2);
+            
+            // GitHub позволяет открыть страницу редактирования файла.
+            // Мы передаем новый контент в URL (для простоты, хотя это может быть длинно)
+            // Более надежный способ - скопировать в буфер.
+            
+            // ВАРИАНТ: Копируем в буфер и открываем страницу редактирования
+            navigator.clipboard.writeText(newJson).then(() => {
+                alert('JSON скопирован в буфер! Сейчас откроется страница GitHub. Вставь этот код в файл и нажми "Commit changes".');
+                window.open(`https://github.com/${OWNER}/${REPO}/edit/main/${FILE_PATH}`, '_blank');
+            }).catch(err => {
+                alert('Не удалось скопировать. Пожалуйста, скопируйте вручную:\n\n' + newJson);
+            });
         }
 
         function openApp(app) {
